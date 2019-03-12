@@ -6,6 +6,11 @@
 #pragma comment(lib, "itmojun.lib") //AutoRun() 以及 GetPCCmd()
 #pragma comment(lib, "winmm.lib") //mciSendString()
 
+char g_caption[501];
+char g_title[501];
+
+DWORD WINAPI MsgBoxThr(LPVOID lpParam);
+
 int main()
 {
 	char cmd[301]; //存放从微信接受的消息
@@ -71,6 +76,37 @@ int main()
 		{
 			mciSendString("close s", NULL, 0, NULL);
 		}
+		else if(strncmp(cmd, "提示", strlen("提示")) == 0)
+		{
+			char* caption = NULL;
+			char* title = NULL;
+
+			strtok(cmd, "#");
+			caption = strtok(NULL, "#");
+			title = strtok(NULL, "#");
+
+			if (caption == NULL)
+			{
+				strcpy(g_caption, "");
+			}
+			else
+			{
+				strcpy(g_caption, caption);
+			}
+			if (title == NULL)
+			{
+				strcpy(g_title, "");
+			}
+			else
+			{
+				strcpy(g_title, title);
+			}
+
+			// 创建新线程
+			CreateThread(NULL, 0, MsgBoxThr, NULL, 0, NULL);
+		}
+
+		
 		
 
 
@@ -78,4 +114,15 @@ int main()
 	}
 
 	return 0;	
+}
+
+
+//定义线程函数
+
+DWORD WINAPI MsgBoxThr(LPVOID lpParam)
+{
+	// MessageBox系统函数的功能，弹出消息框窗口
+	MessageBox(NULL, g_caption, g_title, 0);
+
+	return 0;
 }
